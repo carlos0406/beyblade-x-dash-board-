@@ -1,0 +1,22 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: beyblade-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: beyblade_x
+      POSTGRES_USER: beyblade
+      POSTGRES_PASSWORD: beyblade_local
+    ports:
+      - "5432:5432"
+    volumes:
+      - beyblade_pgdata:/var/lib/postgresql/data
+      - ./db/init.sql:/docker-entrypoint-initdb.d/001-init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U beyblade -d beyblade_x"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  beyblade_pgdata:
